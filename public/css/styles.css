@@ -104,7 +104,7 @@ button:disabled {
   display: flex;
 }
 .chat__sidebar {
-  overflow-y: auto;
+  overflow-y: scroll;
   width: 260px;
   height: 100vh;
   background: -moz-linear-gradient(
