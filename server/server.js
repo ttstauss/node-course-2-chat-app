@@ -24,7 +24,11 @@ io.on('connection', socket => {
   socket.on('join', (params, callback) => {
     if (!isRealString(params.name) || !isRealString(params.room)) {
       return callback('Name and room name are required')
+    } else if (users.isUnique(params.name) !== undefined) {
+      return callback('Username is taken')
     }
+
+    params.room = params.room.toLowerCase()
 
     socket.join(params.room)
 

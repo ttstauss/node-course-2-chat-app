@@ -20,6 +20,12 @@ class Users {
   getUser(id) {
     return this.users.filter(user => user.id === id)[0]
   }
+  isUnique(name) {
+    name = name.toLowerCase()
+    const user = this.users.filter(user => user.name.toLowerCase() === name)
+
+    return user[0]
+  }
   getUserList(room) {
     const users = this.users.filter(user => user.room === room)
     const namesArray = users.map(user => user.name)
