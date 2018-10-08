@@ -32,6 +32,12 @@ class Users {
 
     return namesArray
   }
+  getRoomList() {
+    const rooms = this.users.map(user => user.room)
+    const uniqueRooms = [...new Set(rooms)]
+
+    return uniqueRooms
+  }
 }
 
 module.exports = { Users }

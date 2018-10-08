@@ -18,15 +18,44 @@
         <label>Display name</label>
         <input type="text" name="name" autofocus />
       </div>
-      <div class="form-field">
-        <label>Room name</label>
-        <input type="text" name="room" />
+      <div id="rooms-field" class="form-field">
       </div>
       <div class="form-field">
         <button>Join</button>
       </div>
     </form>
   </div>
+
+  <script id="rooms-template" type="text/template">
+    <label>Room name</label>
+    <input list="rooms" name="room" autocomplete="off" />
+    <datalist id="rooms">
+      {{#rooms}}
+      <option value="{{.}}">
+      {{/rooms}}
+    </datalist>
+  </script>
+
+  <!-- <script id="room-input-template" type="text/template">
+    <label>Room name</label>
+    <input type="text" name="room" />
+  </script>
+
+  <script id="rooms-select-template" type="text/template">
+    <label>Room name</label>
+    <select name="rooms">
+      <option value="">Select or create your own</option>
+      {{#rooms}}
+      <option value="{{.}}">{{.}}</option>
+      {{/rooms}}
+    </select>
+  </script> -->
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/libs/jquery-3.3.1.min.js"></script>
+  <script src="/js/libs/mustache.js"></script>
+  <script src="/js/libs/datalist-polyfill.min.js"></script>
+  <script src="/js/index.js"></script>
 </body>
 
 </html>

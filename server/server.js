@@ -18,9 +18,15 @@ const users = new Users()
 
 app.use(express.static(publicPath))
 
-io.on('connection', socket => {
-  console.log('new user connected')
+const homeNSP = io.of('/')
+homeNSP.on('connection', socket => {
+  socket.emit('rooms', users.getRoomList())
 
+  socket.on('disconnect', () => {})
+})
+
+const chatNSP = io.of('/chat.html')
+chatNSP.on('connection', socket => {
   socket.on('join', (params, callback) => {
     if (!isRealString(params.name) || !isRealString(params.room)) {
       return callback('Name and room name are required')
@@ -35,7 +41,11 @@ io.on('connection', socket => {
     users.removeUser(socket.id)
     users.addUser(socket.id, params.name, params.room)
 
-    io.to(params.room).emit('updateUserList', users.getUserList(params.room))
+    homeNSP.emit('rooms', users.getRoomList())
+
+    chatNSP
+      .to(params.room)
+      .emit('updateUserList', users.getUserList(params.room))
 
     socket.emit(
       'newMessage',
@@ -53,10 +63,9 @@ io.on('connection', socket => {
     const user = users.getUser(socket.id)
 
     if (user && isRealString(message.text)) {
-      io.to(user.room).emit(
-        'newMessage',
-        generateMessage(user.name, message.text)
-      )
+      chatNSP
+        .to(user.room)
+        .emit('newMessage', generateMessage(user.name, message.text))
     }
 
     callback()
@@ -66,10 +75,12 @@ io.on('connection', socket => {
     const user = users.getUser(socket.id)
 
     if (user) {
-      io.to(user.room).emit(
-        'newLocationMessage',
-        generateLocationMessage(user.name, coords.latitude, coords.longitude)
-      )
+      chatNSP
+        .to(user.room)
+        .emit(
+          'newLocationMessage',
+          generateLocationMessage(user.name, coords.latitude, coords.longitude)
+        )
     }
   })
 
@@ -77,12 +88,13 @@ io.on('connection', socket => {
     const user = users.removeUser(socket.id)
 
     if (user) {
-      io.to(user.room).emit('updateUserList', users.getUserList(user.room))
-      io.to(user.room).emit(
-        'newMessage',
-        generateMessage('Admin', `${user.name} has left.`)
-      )
+      chatNSP.to(user.room).emit('updateUserList', users.getUserList(user.room))
+      chatNSP
+        .to(user.room)
+        .emit('newMessage', generateMessage('Admin', `${user.name} has left.`))
     }
+
+    homeNSP.emit('rooms', users.getRoomList())
   })
 })
 

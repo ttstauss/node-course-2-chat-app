@@ -1,4 +1,4 @@
-const socket = io()
+const socket = io('/chat.html')
 
 function scrollToBottom() {
   // selectors
@@ -27,8 +27,6 @@ socket.on('connect', function() {
       alert(err)
       return (window.location.href = '/')
     }
-
-    console.log('No error')
   })
 })
 

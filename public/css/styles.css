@@ -1,3 +1,8 @@
+/* for datalist polyfill */
+[hidden] {
+  display: none;
+}
+
 button,
 button:hover {
   border: none;
